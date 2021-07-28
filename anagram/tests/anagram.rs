@@ -67,6 +67,27 @@ fn test_detect_anagram() {
     process_anagram_case(word, &inputs, &outputs);
 }
 
+/*
+ *#[bench]
+ *#[ignore]
+ *fn test_multiple_anagrams() {
+ *    let word = "allergy";
+ *
+ *    let inputs = [
+ *        "gallery",
+ *        "ballerina",
+ *        "regally",
+ *        "clergy",
+ *        "largely",
+ *        "leading",
+ *    ];
+ *
+ *    let outputs = vec!["gallery", "regally", "largely"];
+ *
+ *    process_anagram_case(word, &inputs, &outputs);
+ *}
+ */
+
 #[test]
 #[ignore]
 fn test_multiple_anagrams() {

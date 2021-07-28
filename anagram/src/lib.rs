@@ -1,32 +1,40 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::HashSet;
 
 /// Check which of the possible anagrams are anagrams of the word
 pub fn anagrams_for<'a>(word: &str, possible_anagrams: &'a [&str]) -> HashSet<&'a str> {
-    let word_uppercase = word.to_uppercase();
-
-    let word_letter_counting = count_word_letters(word_uppercase.as_str());
-    let mut anagrams = HashSet::new();
+    let word_lower = word.to_lowercase();
+    let word_letter_counting = sort(&word_lower);
 
     possible_anagrams
         .iter()
-        .filter(|anagram| word.len() == anagram.len() && word_uppercase != anagram.to_uppercase())
-        .for_each(|anagram| {
-            let anagram_letter_counting = count_word_letters(&anagram.to_uppercase());
+        /*
+         *.filter(|candidate| {
+         *    let candidate_lower = candidate.to_lowercase();
+         *    word_lower.len() == candidate_lower.len() && word_lower != candidate_lower
+         *})
+         */
+        .filter(|candidate| {
+            let candidate_lower = candidate.to_lowercase();
+            let anagram_letter_counting = sort(&candidate_lower);
 
-            if anagram_letter_counting == word_letter_counting {
-                anagrams.insert(*anagram);
-            }
-        });
-    anagrams
+            word_lower.len() == candidate_lower.len()
+                && word_lower != candidate_lower
+                && anagram_letter_counting == word_letter_counting
+
+            /*
+             *if anagram_letter_counting == word_letter_counting {
+             *    return true;
+             *}
+             *false
+             */
+        })
+        .copied()
+        .collect()
 }
 
 /// Count how many appearances each letter has in the word
-fn count_word_letters(word: &str) -> HashMap<char, usize> {
-    let mut letter_counting = HashMap::new();
-
-    word.chars().for_each(|c| {
-        *letter_counting.entry(c).or_insert(0) += 1;
-    });
-
-    letter_counting
+fn sort(word: &str) -> Vec<char> {
+    let mut word_sorted: Vec<char> = word.chars().collect();
+    word_sorted.sort_unstable();
+    word_sorted
 }
