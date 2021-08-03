@@ -34,7 +34,7 @@ fn is_an_sublist<T: PartialEq>(first_list: &[T], second_list: &[T]) -> bool {
         return first_list.is_empty()
             || second_list
                 .windows(first_list.len())
-                .any(|x| x == first_list);
+                .any(|x| x[0] == first_list[0] && x[1..] == first_list[1..]);
     }
     false
 }
