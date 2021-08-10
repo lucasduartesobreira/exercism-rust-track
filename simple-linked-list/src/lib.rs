@@ -66,9 +66,7 @@ impl<T> SimpleLinkedList<T> {
         let mut previous: Option<Box<Node<T>>> = None;
         let mut next: Option<Box<Node<T>>> = None;
 
-        while current.as_mut().is_some() {
-            let mut current_unwraped = current.unwrap();
-
+        while let Some(mut current_unwraped) = current {
             next = current_unwraped.next;
 
             current_unwraped.next = previous;
@@ -105,10 +103,10 @@ impl<T> FromIterator<T> for SimpleLinkedList<T> {
 impl<T> Into<Vec<T>> for SimpleLinkedList<T> {
     fn into(self) -> Vec<T> {
         let mut result = vec![];
-        let mut some = self;
+        let mut node = self;
 
-        while some.peek().is_some() {
-            result.insert(0, some.pop().unwrap());
+        while let Some(data) = node.pop() {
+            result.insert(0, data);
         }
 
         result
