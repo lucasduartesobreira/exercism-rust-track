@@ -12,21 +12,5 @@ pub fn reply(message: &str) -> &str {
 }
 
 fn is_yelling(message: &str) -> bool {
-    let yelling = message.chars().try_fold(true, |only_symbols, c| {
-        if c.is_ascii_lowercase() {
-            return Err("Not yelling");
-        }
-        if c.is_ascii_uppercase() {
-            return Ok(false);
-        }
-        Ok(only_symbols)
-    });
-
-    if let Ok(has_only_symbols) = yelling {
-        if has_only_symbols {
-            return false;
-        }
-        return true;
-    }
-    false
+    message == message.to_uppercase() && message.chars().any(|c| c.is_alphabetic())
 }
