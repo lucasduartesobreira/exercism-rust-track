@@ -6,17 +6,11 @@ pub struct Triangle {
 
 impl Triangle {
     pub fn build(sides: [u64; 3]) -> Option<Triangle> {
-        let [a, b, c] = sides;
-
-        if a == 0 || b == 0 || c == 0 {
-            return None;
+        match sides {
+            [a, b, c] if a == 0 || b == 0 || c == 0 => None,
+            [a, b, c] if a > b + c || b > a + c || c > a + b => None,
+            [a, b, c] => Some(Self { a, b, c }),
         }
-
-        if a > b + c || b > a + c || c > a + b {
-            return None;
-        }
-
-        Some(Triangle { a, b, c })
     }
 
     pub fn is_equilateral(&self) -> bool {
