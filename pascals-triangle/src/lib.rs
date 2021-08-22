@@ -6,21 +6,16 @@ impl PascalsTriangle {
     }
 
     pub fn rows(&self) -> Vec<Vec<u32>> {
-        let mut rows = vec![vec![1u32]];
-        for i in 1..self.0 {
-            rows.push(Self::next_row(rows.get(i as usize - 1).unwrap()));
-        }
-
-        rows
+        (0..self.0).fold(Vec::new(), |mut rows, row_number| {
+            rows.push(Self::nth_row(row_number));
+            rows
+        })
     }
 
-    fn next_row(row: &[u32]) -> Vec<u32> {
-        (0..=row.len() as u32)
-            .map(|x| match x {
-                0 => 1,
-                _ if x == row.len() as u32 => 1,
-                _ => row[x as usize - 1] + row[x as usize],
-            })
-            .collect()
+    fn nth_row(n_row: u32) -> Vec<u32> {
+        (0..n_row).fold(vec![1u32], |mut row, collum| {
+            row.push(row.last().unwrap() * (n_row - collum) / (collum + 1));
+            row
+        })
     }
 }
