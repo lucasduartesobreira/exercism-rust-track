@@ -1,33 +1,11 @@
 pub struct CodonsInfo<'a> {
-    // This field is here to make the template compile and not to
-    // complain about unused type lifetime parameter "'a". Once you start
-    // solving the exercise, delete this field and the 'std::marker::PhantomData'
-    // import.
     pairs: Vec<(&'a str, &'a str)>,
 }
 
 impl<'a> CodonsInfo<'a> {
     pub fn name_for(&self, codon: &str) -> Option<&'a str> {
-        match codon {
-            "AUG" => Some("methionine"),
-            "UUU" | "UUC" => Some("phenylalanine"),
-            "UUA" | "UUG" => Some("leucine"),
-            "UCU" | "UCC" | "UCA" | "UCG" => Some("serine"),
-            "UAU" | "UAC" => Some("tyrosine"),
-            "UGU" | "UGC" => Some("cysteine"),
-            "UGG" => Some("tryptophan"),
-            "CGA" | "AGA" | "AGG" => Some("arginine"),
-            "AUU" => Some("isoleucine"),
-            "GUU" => Some("valine"),
-            "UAA" | "UAG" | "UGA" => Some("stop codon"),
-            _ => None,
-        }
-        /*
-         *unimplemented!(
-         *    "Return the protein name for a '{}' codon or None, if codon string is invalid",
-         *    codon
-         *);
-         */
+        let (_, name) = self.pairs.iter().find(|(c, _)| *c == codon)?;
+        Some(*name)
     }
 
     pub fn of_rna(&self, rna: &str) -> Option<Vec<&'a str>> {
@@ -76,10 +54,4 @@ impl<'a> CodonsInfo<'a> {
 
 pub fn parse<'a>(pairs: Vec<(&'a str, &'a str)>) -> CodonsInfo<'a> {
     CodonsInfo { pairs }
-    /*
-     *unimplemented!(
-     *    "Construct a new CodonsInfo struct from given pairs: {:?}",
-     *    pairs
-     *);
-     */
 }
