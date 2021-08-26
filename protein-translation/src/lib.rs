@@ -19,12 +19,13 @@ impl<'a> CodonsInfo<'a> {
 
         let mut codons_name = Vec::new();
 
+        let mut found_a_stop = false;
         for codon in codons {
             let codon = self.name_for(codon.as_str());
             match codon {
                 Some(codon) => {
-                    println!("{}", codon);
                     if codon == "stop codon" {
+                        found_a_stop = true;
                         break;
                     }
                     codons_name.push(codon);
@@ -33,22 +34,12 @@ impl<'a> CodonsInfo<'a> {
             }
         }
 
+        // HACK: Find another way to deal with invalid lengths
+        if !found_a_stop && rna.len() % 3 != 0 {
+            return None;
+        }
+
         Some(codons_name)
-        /*
-         *            .try_fold(Vec::new(), |mut acc, x| {
-         *                let x = self.name_for(x.as_str())?;
-         *
-         *                if x == "stop condon" {
-         *                    return None;
-         *                }
-         *
-         *                acc.push(x);
-         *                Some(acc)
-         *            })
-         */
-        /*
-         *unimplemented!("Return a list of protein names that correspond to the '{}' RNA string or None if the RNA string is invalid", rna);
-         */
     }
 }
 
