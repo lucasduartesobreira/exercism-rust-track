@@ -1,11 +1,12 @@
+use std::collections::HashMap;
+
 pub struct CodonsInfo<'a> {
-    pairs: Vec<(&'a str, &'a str)>,
+    pairs: HashMap<&'a str, &'a str>,
 }
 
 impl<'a> CodonsInfo<'a> {
     pub fn name_for(&self, codon: &str) -> Option<&'a str> {
-        let (_, name) = self.pairs.iter().find(|(c, _)| *c == codon)?;
-        Some(*name)
+        self.pairs.get(codon).copied()
     }
 
     pub fn of_rna(&self, rna: &str) -> Option<Vec<&'a str>> {
@@ -44,5 +45,7 @@ impl<'a> CodonsInfo<'a> {
 }
 
 pub fn parse<'a>(pairs: Vec<(&'a str, &'a str)>) -> CodonsInfo<'a> {
-    CodonsInfo { pairs }
+    CodonsInfo {
+        pairs: pairs.into_iter().collect(),
+    }
 }
