@@ -13,7 +13,7 @@ pub fn is_valid(code: &str) -> bool {
     let mut is_second = false;
     let mut n_sum = 0;
 
-    for c in code.chars().filter(|c| c != &' ') {
+    for c in code.chars().rev().filter(|c| c != &' ') {
         let mut number = c.to_digit(10).unwrap();
 
         if is_second {
