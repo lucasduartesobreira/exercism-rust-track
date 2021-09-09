@@ -1,5 +1,4 @@
 pub fn annotate(minefield: &[&str]) -> Vec<String> {
-    //unimplemented!("AHAHAHAHAHAHA");
     let field = MineField::parse(minefield);
     field.serialize()
 }
@@ -35,7 +34,11 @@ impl MineField {
     }
 
     fn serialize(&self) -> Vec<String> {
-        if self.heigth == 0 || self.width == 0 {
+        if self.heigth == 0 {
+            return vec![];
+        }
+
+        if self.width == 0 {
             return vec!["".to_string()];
         }
 
