@@ -1,4 +1,6 @@
-#[derive(Debug, PartialEq, Eq)]
+use std::collections::BTreeMap;
+
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub struct Palindrome {
     a: u64,
     b: u64,
@@ -6,75 +8,45 @@ pub struct Palindrome {
 
 impl Palindrome {
     pub fn new(a: u64, b: u64) -> Palindrome {
-        //unimplemented!("create a palindrome with factors ({}, {})", a, b)
         Palindrome { a, b }
     }
 
     pub fn value(&self) -> u64 {
-        //unimplemented!("return the value of this palindrome")
         self.a * self.b
     }
 
     pub fn insert(&mut self, a: u64, b: u64) {
-        //unimplemented!("insert new factors ({}, {}) into this palindrome", a, b)
         self.a = a;
         self.b = b;
     }
 }
 
 pub fn palindrome_products(min: u64, max: u64) -> Option<(Palindrome, Palindrome)> {
-    /*
-     *unimplemented!(
-     *    "Find the min and max palindromic numbers which are products of numbers in the inclusive range ({}..{})",
-     *    min,
-     *    max
-     *)
-     */
-    let mut minimal = None;
-    for x in min..=max {
-        for y in x + 1..=max {
-            let number = x * y;
-            let vec = to_vec(number);
-            let mut reverse = vec.clone();
-            reverse.reverse();
+    let map: BTreeMap<u64, Palindrome> = (min..=max)
+        .map(|x| {
+            (x..=max).filter_map(move |y| {
+                if is_palindrome(x, y) {
+                    Some((x * y, Palindrome::new(x, y)))
+                } else {
+                    None
+                }
+            })
+        })
+        .flatten()
+        .collect::<_>();
 
-            if vec == reverse {
-                minimal = Some(Palindrome::new(x, y));
-                break;
-            }
-        }
-
-        if minimal.is_some() {
-            break;
-        }
+    if let (Some(min), Some(max)) = (map.iter().next(), map.iter().next_back()) {
+        Some((*min.1, *max.1))
+    } else {
+        None
     }
-
-    let mut maximum = None;
-    for x in (min..=max).rev() {
-        for y in (min + 1..=(x)).rev() {
-            let number = x * y;
-            let vec = to_vec(number);
-            let mut reverse = vec.clone();
-            reverse.reverse();
-
-            if vec == reverse {
-                maximum = Some(Palindrome::new(y, x));
-                break;
-            }
-        }
-
-        if maximum.is_some() {
-            break;
-        }
-    }
-
-    Some((minimal?, maximum?))
 }
 
-fn to_vec(value: u64) -> Vec<u32> {
-    value
-        .to_string()
-        .chars()
-        .map(|c| c.to_digit(10).unwrap())
-        .collect::<_>()
+fn is_palindrome(x: u64, y: u64) -> bool {
+    let number = x * y;
+    let number_as_string = number.to_string();
+    let mut number_in_char = number_as_string.chars();
+    let mut reversed_number_iter = number_in_char.clone().rev();
+
+    number_in_char.all(|c| c == reversed_number_iter.next().unwrap_or_default())
 }
