@@ -22,24 +22,25 @@ impl Palindrome {
 }
 
 pub fn palindrome_products(min: u64, max: u64) -> Option<(Palindrome, Palindrome)> {
-    let map: BTreeMap<u64, Palindrome> = (min..=max)
-        .map(|x| {
-            (x..=max).filter_map(move |y| {
-                if is_palindrome(x, y) {
-                    Some((x * y, Palindrome::new(x, y)))
-                } else {
-                    None
-                }
-            })
-        })
-        .flatten()
-        .collect::<_>();
-
-    if let (Some(min), Some(max)) = (map.iter().next(), map.iter().next_back()) {
-        Some((*min.1, *max.1))
-    } else {
-        None
+    if min > max {
+        return None;
     }
+
+    let diff = max - min;
+
+    let min_palindrome: Option<Palindrome> = (0..=diff)
+        .flat_map(|inc| (0..=inc).rev().map(move |i| (min + inc - i, min + i)))
+        .filter(|(a, b)| a <= &max && b <= &max)
+        .map(|(a, b)| Palindrome::new(a, b))
+        .find(|p| is_palindrome(p.a, p.b));
+
+    let max_palindrome: Option<Palindrome> = (0..=diff)
+        .flat_map(|dec| (0..=dec).map(move |i| (max - dec + i, max - i)))
+        .filter(|(a, b)| a >= &min && b >= &min)
+        .map(|(a, b)| Palindrome::new(a, b))
+        .find(|p| is_palindrome(p.a, p.b));
+
+    Some((min_palindrome?, max_palindrome?))
 }
 
 fn is_palindrome(x: u64, y: u64) -> bool {
