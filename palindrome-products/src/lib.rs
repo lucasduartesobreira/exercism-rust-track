@@ -70,12 +70,20 @@ pub fn palindrome_products(min: u64, max: u64) -> Option<(Palindrome, Palindrome
 
     let diff = max - min;
 
+    // Considering starting from (a,b) = (min,min).
+    // Iterate through the ascending order of the product of possibles pairs.
+    // So it will build something like a binary tree where steps to the left
+    // or the right increase by one respectively a, b.
     let min_palindrome: Option<Palindrome> = (0..=diff)
         .flat_map(|inc| (0..=inc).rev().map(move |i| (min + inc - i, min + i)))
         .filter(|(a, b)| a <= &max && b <= &max)
         .map(|(a, b)| Palindrome::new(a, b))
         .find(|p| p.is_valid());
 
+    // Considering starting from (a,b) = (max,max).
+    // Iterate through the decreasing order of the product of possibles pairs.
+    // So it will build something like a binary tree where steps to the left
+    // or the right decrease by one respectively a, b.
     let max_palindrome: Option<Palindrome> = (0..=diff)
         .flat_map(|dec| (0..=dec).map(move |i| (max - dec + i, max - i)))
         .filter(|(a, b)| a >= &min && b >= &min)
