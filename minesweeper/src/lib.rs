@@ -65,21 +65,17 @@ impl MineField {
     fn sum_of_surround(&self, row: usize, collum: usize) -> u8 {
         let minefield = &self.field;
 
-        (-1..=1).fold(0, |acc, r_diff| {
-            let r = r_diff + row as i64;
-            (-1..=1).fold(acc, |acc, c_diff| {
-                let c = c_diff + collum as i64;
-                if r >= 0
-                    && r < self.heigth as i64
-                    && c >= 0
-                    && c < self.width as i64
-                    && minefield[r as usize][c as usize] == '*'
-                {
-                    acc + 1
-                } else {
-                    acc
+        (row.saturating_sub(1)..=row + 1).fold(0, |acc, r| {
+            let line = minefield.get(r);
+            match line {
+                Some(line) => {
+                    (collum.saturating_sub(1)..=collum + 1).fold(acc, |sum, c| match line.get(c) {
+                        Some('*') => sum + 1,
+                        _ => sum,
+                    })
                 }
-            })
+                None => acc,
+            }
         })
     }
 }
