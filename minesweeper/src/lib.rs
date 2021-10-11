@@ -50,9 +50,10 @@ impl MineField {
                     .enumerate()
                     .map(|(col_index, &col)| {
                         if col == ' ' {
-                            let sum_of_surround = self.sum_of_surround(row_index, col_index);
+                            let sum_of_surround =
+                                u32::from(self.sum_of_surround(row_index, col_index));
                             if sum_of_surround != 0 {
-                                return (b'0' + sum_of_surround as u8) as char;
+                                return char::from_digit(sum_of_surround, 10).unwrap();
                             }
                         }
                         col
