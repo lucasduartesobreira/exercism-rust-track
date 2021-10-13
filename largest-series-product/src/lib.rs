@@ -5,34 +5,17 @@ pub enum Error {
 }
 
 pub fn lsp(string_digits: &str, span: usize) -> Result<u64, Error> {
-    match (string_digits.len(), span) {
-        (x, y) if y > x => Err(Error::SpanTooLong),
-        (_, 0) => Ok(1),
-        _ => {
-            let normalized_vec_of_windows = string_digits
+    match span {
+        0 => Ok(1),
+        _ => Ok(u64::from(
+            string_digits
                 .chars()
-                .collect::<Vec<_>>()
+                .map(|c| c.to_digit(10).ok_or(Error::InvalidDigit(c)))
+                .collect::<Result<Vec<u32>, Error>>()?
                 .windows(span)
-                .map(|chars| {
-                    chars
-                        .iter()
-                        .map(|&c| c.to_digit(10).ok_or(Error::InvalidDigit(c)))
-                        .collect::<Result<Vec<_>, _>>()
-                })
-                .collect::<Result<Vec<_>, Error>>()?;
-
-            Ok(normalized_vec_of_windows
-                .into_iter()
-                .map(|vecs| vecs.into_iter().map(u64::from).product())
+                .map(|window| window.iter().product::<u32>())
                 .max()
-                .unwrap())
-        }
+                .ok_or(Error::SpanTooLong)?,
+        )),
     }
-    /*
-     *unimplemented!(
-     *    "largest series product of a span of {} digits in {}",
-     *    span,
-     *    string_digits
-     *);
-     */
 }
