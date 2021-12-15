@@ -5,37 +5,6 @@ pub enum Error {
     InvalidDigit(u32),
 }
 
-///
-/// Convert a number between two bases.
-///
-/// A number is any slice of digits.
-/// A digit is any unsigned integer (e.g. u8, u16, u32, u64, or usize).
-/// Bases are specified as unsigned integers.
-///
-/// Return an `Err(.)` if the conversion is impossible.
-/// The tests do not test for specific values inside the `Err(.)`.
-///
-///
-/// You are allowed to change the function signature as long as all test still pass.
-///
-///
-/// Example:
-/// Input
-///   number: &[4, 2]
-///   from_base: 10
-///   to_base: 2
-/// Result
-///   Ok(vec![1, 0, 1, 0, 1, 0])
-///
-/// The example corresponds to converting the number 42 from decimal
-/// which is equivalent to 101010 in binary.
-///
-///
-/// Notes:
-///  * The empty slice ( "[]" ) is equal to the number 0.
-///  * Never output leading 0 digits, unless the input number is 0, in which the output must be `[0]`.
-///    However, your function must be able to process input with leading 0 digits.
-///
 pub fn convert(number: &[u32], from_base: u32, to_base: u32) -> Result<Vec<u32>, Error> {
     if from_base <= 1 {
         return Err(Error::InvalidInputBase);
@@ -49,34 +18,38 @@ pub fn convert(number: &[u32], from_base: u32, to_base: u32) -> Result<Vec<u32>,
         return Ok(vec![0]);
     }
 
-    let mut number_at_base =
-        number
-            .iter()
-            .rev()
-            .enumerate()
-            .try_fold(0u32, |acc, (index, &k)| {
-                if k >= from_base {
-                    Err(Error::InvalidDigit(k))
-                } else {
-                    Ok(acc + k * (from_base.pow(index as u32)))
-                }
-            })?;
+    let number_at_base = number
+        .iter()
+        .rev()
+        .enumerate()
+        .try_fold(0u32, |acc, (index, &k)| {
+            if k >= from_base {
+                Err(Error::InvalidDigit(k))
+            } else {
+                Ok(acc + k * (from_base.pow(index as u32)))
+            }
+        })?;
 
-    let mut number_at_new_base = vec![];
-
-    while number_at_base >= 1 {
-        let result = number_at_base / to_base;
-        let remainder = number_at_base % to_base;
-
-        number_at_new_base.push(remainder);
-        number_at_base = result;
-    }
-
-    if number_at_new_base.is_empty() {
-        Ok(vec![0])
-    } else {
-        number_at_new_base.reverse();
-        Ok(number_at_new_base)
-    }
+    Ok(get_number_at_new_base(vec![], number_at_base, to_base))
 }
 
+fn get_number_at_new_base(mut remainder_stack: Vec<u32>, actual: u32, to_base: u32) -> Vec<u32> {
+    if actual == 0 {
+        return match remainder_stack.is_empty() {
+            true => {
+                vec![0]
+            }
+            false => {
+                remainder_stack.reverse();
+                remainder_stack
+            }
+        };
+    }
+
+    let remainder = actual % to_base;
+    let next = actual / to_base;
+
+    remainder_stack.push(remainder);
+
+    get_number_at_new_base(remainder_stack, next, to_base)
+}
