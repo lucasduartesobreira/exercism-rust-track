@@ -18,7 +18,7 @@ pub fn convert(number: &[u32], from_base: u32, to_base: u32) -> Result<Vec<u32>,
         return Ok(vec![0]);
     }
 
-    let number_at_base = number
+    number
         .iter()
         .rev()
         .enumerate()
@@ -28,9 +28,8 @@ pub fn convert(number: &[u32], from_base: u32, to_base: u32) -> Result<Vec<u32>,
             } else {
                 Ok(acc + k * (from_base.pow(index as u32)))
             }
-        })?;
-
-    Ok(get_number_at_new_base(vec![], number_at_base, to_base))
+        })
+        .map(|val| get_number_at_new_base(vec![], val, to_base))
 }
 
 fn get_number_at_new_base(mut remainder_stack: Vec<u32>, actual: u32, to_base: u32) -> Vec<u32> {
