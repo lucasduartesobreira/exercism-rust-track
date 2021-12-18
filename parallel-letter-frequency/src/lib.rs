@@ -35,7 +35,9 @@ fn count_letters(input: Vec<&str>) -> HashMap<char, usize> {
 
     for string in input {
         for ch in string.chars() {
-            *map.entry(ch).or_default() += 1;
+            if ch.is_alphabetic() {
+                *map.entry(ch.to_ascii_lowercase()).or_default() += 1;
+            }
         }
     }
     map
