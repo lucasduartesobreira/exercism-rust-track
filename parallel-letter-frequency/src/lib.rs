@@ -2,6 +2,9 @@ use std::cmp::min;
 use std::{collections::HashMap, thread};
 
 pub fn frequency(input: &[&'static str], worker_count: usize) -> HashMap<char, usize> {
+    if input.is_empty() {
+        return HashMap::new();
+    }
     let real_worker_count = min(input.len(), worker_count);
     let worker_length = (input.len() / real_worker_count).max(1);
     let fixed_worker_length = if real_worker_count * worker_length < input.len() {
